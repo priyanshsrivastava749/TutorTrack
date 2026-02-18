@@ -1,8 +1,8 @@
 import { User, Assignment, ResourceQuery } from '../types';
 
-// In production, Nginx proxies /api requests to the backend container.
-// In dev, Vite proxies /api.
-const API_URL = '/api';
+// In production (Vercel), we use the VITE_API_URL env var.
+// In dev, we fallback to '/api' which Vite proxies.
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 const getHeaders = () => {
     const token = localStorage.getItem('token');
