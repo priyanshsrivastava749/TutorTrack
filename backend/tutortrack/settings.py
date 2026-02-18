@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -12,7 +13,9 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost 127.0.0.1 [::1]').split(' ')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost 127.0.0.1 [::1]').split(' ')
+if not os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(' ')
 
 INSTALLED_APPS = [
@@ -63,24 +66,12 @@ WSGI_APPLICATION = 'tutortrack.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-if os.environ.get('SQL_ENGINE'):
-    DATABASES = {
-        'default': {
-            'ENGINE': os.environ.get('SQL_ENGINE'),
-            'NAME': os.environ.get('SQL_DATABASE'),
-            'USER': os.environ.get('SQL_USER'),
-            'PASSWORD': os.environ.get('SQL_PASSWORD'),
-            'HOST': os.environ.get('SQL_HOST'),
-            'PORT': os.environ.get('SQL_PORT'),
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+DATABASES = {
+    'default': dj_database_url.config(
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        conn_max_age=600
+    )
+}
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -103,10 +94,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'api.User'
 
 # CORS Settings
-# In production, this should be restricted to the frontend domain
-CORS_ALLOW_ALL_ORIGINS = True 
-# For stricter security in prod, use:
-# CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost').split(' ')
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+
+if os.environ.get('RENDER'):
+    CORS_ALLOWED_ORIGINS.append(os.environ.get('RENDER_EXTERNAL_URL')) # Backend URL
+
+# Add Vercel domains
+# You might want to use a regex or a list of trusted domains in production
+CORS_ORIGIN_REGEX_WHITELIST = [
+    r'^https://.*\.vercel\.app$',
+]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
