@@ -1,12 +1,31 @@
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from .models import User, Assignment, ResourceQuery
 from .serializers import UserSerializer, AssignmentSerializer, ResourceQuerySerializer
 import random
 from django.db import models
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def link_student(request):
+    teacher = request.user
+    student_code = request.data.get('student_code') # Corrected parameter name
+    
+    if not student_code:
+            return Response({'message': 'Student code is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        student = User.objects.get(unique_id=student_code, role='student')
+        student.teachers.add(teacher) # M2M relationship
+        student.save()
+        return Response({'message': 'Student Linked Successfully'}, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({'message': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class AuthViewSet(viewsets.ViewSet):
     permission_classes = [permissions.AllowAny]
@@ -61,24 +80,6 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def me(self, request):
         return Response(UserSerializer(request.user).data)
-
-    @action(detail=False, methods=['post'])
-    def link_student(self, request):
-        teacher = request.user
-        student_code = request.data.get('student_code') # Corrected parameter name
-        
-        if not student_code:
-             return Response({'message': 'Student code is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            student = User.objects.get(unique_id=student_code, role='student')
-            student.teachers.add(teacher) # M2M relationship
-            student.save()
-            return Response({'message': 'Student Linked Successfully'}, status=status.HTTP_200_OK)
-        except User.DoesNotExist:
-            return Response({'message': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['patch'])
     def update_resources(self, request, pk=None):
