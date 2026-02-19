@@ -4,8 +4,8 @@ import { User, Assignment, ResourceQuery } from '../types';
 // In dev, we fallback to '/api' which Vite proxies.
 // In production (Vercel), we use the VITE_API_URL env var.
 // In dev, we fallback to '/api' which Vite proxies.
-const BASE_URL = import.meta.env.VITE_API_URL || '';
-export const API_URL = BASE_URL ? `${BASE_URL}/api` : '/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://tutortrack-backend-55tf.onrender.com';
+export const API_URL = `${BASE_URL}/api`;
 
 const getHeaders = () => {
     const token = localStorage.getItem('token');
