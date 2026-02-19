@@ -248,7 +248,9 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user }) => {
                 }
                 setAddStudentError(data.message || 'Failed to link student');
             }
-        } catch (error) {
+        } catch (error: any) {
+            console.error("ADD STUDENT ERROR:", error.response?.data || error.message);
+            alert(JSON.stringify(error.response?.data) || error.message);
             console.error('Link error:', error);
             alert('An error occurred while linking the student.');
         } finally {
@@ -345,6 +347,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user }) => {
                 <form onSubmit={handleLinkStudent} className="w-full md:w-auto">
                     <div className="flex gap-2">
                         <input
+                            id="student_id"
+                            name="student_id"
                             type="text"
                             placeholder="Enter Student ID (e.g. STU-003)"
                             className="w-full md:w-64 bg-neutral-950 border border-neutral-800 rounded-lg px-3 py-2 text-sm text-white focus:ring-1 focus:ring-brand-500 outline-none"
