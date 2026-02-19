@@ -77,6 +77,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Student Linked Successfully'}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'message': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['patch'])
     def update_resources(self, request, pk=None):

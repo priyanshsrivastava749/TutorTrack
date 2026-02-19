@@ -231,7 +231,8 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user }) => {
                 body: JSON.stringify({ student_code: newStudentId })
             });
 
-            const data = await response.json();
+            const text = await response.text();
+            const data = text ? JSON.parse(text) : {};
 
             if (response.ok) {
                 console.log('Link success:', data);
