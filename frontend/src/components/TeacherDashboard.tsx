@@ -214,6 +214,10 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user }) => {
         fetchData();
     }, [user.id, refresh]);
 
+    import { API_URL } from '../services/api';
+
+    // ... (other imports)
+
     const handleLinkStudent = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newStudentId.trim()) return;
@@ -222,7 +226,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user }) => {
         try {
             console.log('Linking student:', newStudentId);
             const token = localStorage.getItem('token');
-            const response = await fetch('/api/link-student/', {
+            const response = await fetch(`${API_URL}/link-student/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

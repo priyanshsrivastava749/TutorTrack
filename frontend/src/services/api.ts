@@ -5,7 +5,7 @@ import { User, Assignment, ResourceQuery } from '../types';
 // In production (Vercel), we use the VITE_API_URL env var.
 // In dev, we fallback to '/api' which Vite proxies.
 const BASE_URL = import.meta.env.VITE_API_URL || '';
-const API_URL = BASE_URL ? `${BASE_URL}/api` : '/api';
+export const API_URL = BASE_URL ? `${BASE_URL}/api` : '/api';
 
 const getHeaders = () => {
     const token = localStorage.getItem('token');
