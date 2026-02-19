@@ -83,10 +83,10 @@ export const api = {
     },
 
     linkStudent: async (studentUniqueId: string): Promise<boolean> => {
-        const res = await fetch(`${API_URL}/users/link_student/`, {
+        const res = await fetch(`${API_URL}/link-student/`, {
             method: 'POST',
             headers: getHeaders(),
-            body: JSON.stringify({ studentUniqueId })
+            body: JSON.stringify({ student_code: studentUniqueId })
         });
         const data = await res.json();
         return data.success;
