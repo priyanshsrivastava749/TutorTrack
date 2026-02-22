@@ -13,16 +13,10 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '[::1]',
-    'tutor-track-blond.vercel.app',
-    'tutortrack-backend-55tf.onrender.com',
-]
+ALLOWED_HOSTS = ['*']
 if os.environ.get('ALLOWED_HOSTS'):
     ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(' '))
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(' ')
+CSRF_TRUSTED_ORIGINS = ['https://tutor-track-blond.vercel.app', 'https://tutortrack-backend-55tf.onrender.com'] + os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(' ')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -100,7 +94,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'api.User'
 
 # CORS Settings
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
