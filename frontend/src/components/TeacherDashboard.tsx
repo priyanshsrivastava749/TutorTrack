@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { User, Assignment, ResourceQuery } from '../types';
-import { api } from '../services/api';
+import { api, API_URL } from '../services/api';
 import { Users, Plus, Link as LinkIcon, Folder, FileText, ChevronDown, CheckCircle, Clock, AlertCircle, Eye, EyeOff, Trash2, ExternalLink, Save, Edit2, X, UploadCloud, CheckSquare, Square, Loader2 } from 'lucide-react';
 import TypingEffect from './TypingEffect';
 
@@ -214,9 +214,7 @@ const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user }) => {
         fetchData();
     }, [user.id, refresh]);
 
-    import { API_URL } from '../services/api';
 
-    // ... (other imports)
 
     const handleLinkStudent = async (e: React.FormEvent) => {
         e.preventDefault();
