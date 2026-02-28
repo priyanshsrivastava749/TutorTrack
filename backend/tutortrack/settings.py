@@ -13,11 +13,14 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*'] # We can leave it as * for now, but to be strict:
 if os.environ.get('ALLOWED_HOSTS'):
     ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(' '))
-# Replace 'yourusername' with your actual PythonAnywhere username
-CSRF_TRUSTED_ORIGINS = ['https://tutor-track-blond.vercel.app', 'https://yourusername.pythonanywhere.com'] + os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(' ')
+else:
+    # Add pythonanywhere domain directly if not in env
+    ALLOWED_HOSTS.append('.pythonanywhere.com')
+# Add a blanket allow for now, this can be restricted later if needed
+CSRF_TRUSTED_ORIGINS = ['https://tutor-track-blond.vercel.app', 'https://*.pythonanywhere.com'] + os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(' ')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -68,15 +71,11 @@ WSGI_APPLICATION = 'tutortrack.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    # dj_database_url will automatically parse the DATABASE_URL environment variable if it exists.
-    # To use your external Postgres Database on PythonAnywhere, you must set the DATABASE_URL env var
-    # inside your WSGI file before loading Django, e.g.:
-    # os.environ['DATABASE_URL'] = 'postgres://user:password@host:port/dbname'
-    # Fallback is sqlite for local development
-    'default': dj_database_url.config(
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-        conn_max_age=600
-    )
+    # Hardcode SQLite for the PythonAnywhere branch to ensure it uses a clean, separate database
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
@@ -111,7 +110,10 @@ if os.environ.get('RENDER'):
     CORS_ALLOWED_ORIGINS.append(os.environ.get('RENDER_EXTERNAL_URL')) # Backend URL
 
 # If you use a strict CORS policy, add PythonAnywhere format here:
-# CORS_ALLOWED_ORIGINS.append('https://yourusername.pythonanywhere.com')
+# We just add a generic sub-domain rule for PythonAnywhere
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.pythonanywhere\.com$",
+]
 
 # Add Vercel domains
 # You might want to use a regex or a list of trusted domains in production
