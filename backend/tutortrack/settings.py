@@ -16,7 +16,8 @@ DEBUG = os.environ.get('DEBUG') == 'True'
 ALLOWED_HOSTS = ['*']
 if os.environ.get('ALLOWED_HOSTS'):
     ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(' '))
-CSRF_TRUSTED_ORIGINS = ['https://tutor-track-blond.vercel.app', 'https://tutortrack-backend-55tf.onrender.com'] + os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(' ')
+# Replace 'yourusername' with your actual PythonAnywhere username
+CSRF_TRUSTED_ORIGINS = ['https://tutor-track-blond.vercel.app', 'https://yourusername.pythonanywhere.com'] + os.environ.get('CSRF_TRUSTED_ORIGINS', 'http://localhost').split(' ')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -67,6 +68,11 @@ WSGI_APPLICATION = 'tutortrack.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
+    # dj_database_url will automatically parse the DATABASE_URL environment variable if it exists.
+    # To use your external Postgres Database on PythonAnywhere, you must set the DATABASE_URL env var
+    # inside your WSGI file before loading Django, e.g.:
+    # os.environ['DATABASE_URL'] = 'postgres://user:password@host:port/dbname'
+    # Fallback is sqlite for local development
     'default': dj_database_url.config(
         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
         conn_max_age=600
@@ -103,6 +109,9 @@ CORS_ALLOWED_ORIGINS = [
 
 if os.environ.get('RENDER'):
     CORS_ALLOWED_ORIGINS.append(os.environ.get('RENDER_EXTERNAL_URL')) # Backend URL
+
+# If you use a strict CORS policy, add PythonAnywhere format here:
+# CORS_ALLOWED_ORIGINS.append('https://yourusername.pythonanywhere.com')
 
 # Add Vercel domains
 # You might want to use a regex or a list of trusted domains in production
