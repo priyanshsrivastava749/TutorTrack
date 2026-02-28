@@ -9,5 +9,6 @@
 .gsd/TODO.md
 
 # OS generated
-Thumbs.db
+thumbs.db
 .DS_Store
+backend/gunicorn.ctl
